@@ -7,7 +7,7 @@ let connection = null;
 let reconnectTimer = null;
 reconnectTimer = setInterval(connectToMYSQL, 2000);
 
-connectToMYSQL()
+connectToMYSQL();
 
 function connectToMYSQL(){
    connection = mysql.createConnection({
@@ -29,7 +29,7 @@ function connectToMYSQL(){
                date_added DATE
             );
          `);
-         clearInterval(reconnectTimer)
+         clearInterval(reconnectTimer);
       }
       console.log('db ' + connection.state);  
    });
@@ -78,7 +78,7 @@ class DbService{
                  id: insertId,
                  name: name,
                  dateAdded: dateAdded
-            }
+            };
          } catch(error){
                console.log(error);
          }
@@ -86,7 +86,6 @@ class DbService{
 
    async searchByName(name){
         try{
-             const dateAdded = new Date();
              const response = await new Promise((resolve, reject) => 
                   {
                      const query = "SELECT * FROM names where name = ?;";

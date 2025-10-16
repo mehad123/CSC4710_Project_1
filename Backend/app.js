@@ -1,7 +1,7 @@
-const express = require('express')
-const cors = require ('cors')
-const dotenv = require('dotenv')
-dotenv.config()
+const express = require('express');
+const cors = require ('cors');
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
@@ -9,7 +9,7 @@ const dbService = require('./dbService');
 
 
 app.use(cors());
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 app.post('/insert', async (request, response) => {
@@ -28,7 +28,7 @@ app.get('/getAll', async (request, response) => {
 
     const result = await db.getAllData()
     .catch(err=>console.error(err));
-    response.json({data: result})
+    response.json({data: result});
 });
 
 
@@ -55,7 +55,7 @@ app.patch('/update', async (request, response) => {
 
     const result = await db.updateNameById(id, name)
     .catch(err=>console.error(err));
-    response.json({data: result})
+    response.json({data: result});
 });
 
 app.delete('/delete/:id', async (request, response) => {     
@@ -66,11 +66,11 @@ app.delete('/delete/:id', async (request, response) => {
     .catch(err=>console.error(err));
 
     response.json({success: true});
-})   
+});   
 
 
-app.listen(process.env.PORT, 
+app.listen(process.env.APP_PORT, 
     () => {
-        console.log(`I am listening on port ${process.env.PORT}.`)
+        console.log(`I am listening on port ${process.env.APP_PORT}.`);
     }
 );

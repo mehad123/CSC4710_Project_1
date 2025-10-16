@@ -1,7 +1,9 @@
-const backendURL = "http://localhost:5050"
+const backendURL = "http://localhost:5050/";
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log("hi")
     const response = await fetch(`${backendURL}getAll`); 
+    console.log(response)
     const result = await response.json();
     loadHTMLTable(result["data"]);
 });
@@ -22,7 +24,7 @@ addBtn.onclick = async () => {
     });
     const result = await response.json();
     insertRowIntoTable(result['data']);
-}
+};
 
 const searchBtn =  document.querySelector('#search-btn');
 searchBtn.onclick = async () => {
@@ -33,7 +35,7 @@ searchBtn.onclick = async () => {
     const response = await fetch(`${backendURL}search/` + searchValue);
     const result = await response.json();
     loadHTMLTable(result['data']);
-}
+};
 
 const updateBtn = document.querySelector('#update-row-btn');
 updateBtn.onclick = async () => {
@@ -55,10 +57,10 @@ updateBtn.onclick = async () => {
     const result = await response.json();
     if (!result.success){
         debug("update failed");
-        return
+        return;
     }
-    location.reload()
-}
+    location.reload();
+};
 
 
 let rowToDelete; 
@@ -81,8 +83,8 @@ function showEditRowInterface(id){
 }
 
 async function deleteRowById(id){
-    const response = await fetch(`${backendURL}delete/` + id,{ method: 'DELETE'})
-    const result = await response.json()
+    const response = await fetch(`${backendURL}delete/` + id,{ method: 'DELETE'});
+    const result = await response.json();
     if (result.success){
         document.getElementById("table").deleteRow(rowToDelete);
     }
@@ -146,5 +148,5 @@ function debug(data){
         },
         method: 'POST',
         body: JSON.stringify({debug: data})
-    })
+    });
 }
