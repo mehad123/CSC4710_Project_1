@@ -5,8 +5,9 @@ dotenv.config();
 let instance = null; 
 let connection = null;
 let reconnectTimer = null;
-reconnectTimer = setInterval(connectToMYSQL, 2000);
 
+// in case mysql isn't ready immediately
+reconnectTimer = setInterval(connectToMYSQL, 2000);
 connectToMYSQL();
 
 function connectToMYSQL(){
