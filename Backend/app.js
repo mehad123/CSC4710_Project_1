@@ -95,8 +95,8 @@ app.get('/users/salary', getUsersSalary);
 app.get('/users/age', getUsersAge);
 
 app.get('/users/today', getUsersToday);
-app.get('/users/:username/afterReg',getUsersAfter);
-app.get('/users/:username/sameReg', getUsersSame);
+app.get('/users/afterReg/:username',getUsersAfter);
+app.get('/users/sameReg/:username', getUsersSame);
 
 app.get('/users/nosignin', getUsersNoSignIn);
 
