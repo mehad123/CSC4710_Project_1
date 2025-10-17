@@ -79,9 +79,36 @@ function connectToMYSQL(){
 
 class Users{
    static getUsersInstance(){ 
-      instance = instance ? instance : new DbService()
-      return instance
+      instance = instance ? instance : new DbService();
+      return instance;
    }
+   async createUser(options){
+      const {username, password, firstname, lastname,
+         salary, age, registerday, signintime} = {options};
+
+      await new Promise((resolve, reject) => {
+         const query = "INSERT INTO users (username, password, firstname, lastname, salary, age, registerday, signintime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+         connection.query(query, [username, password, firstname, lastname, salary, age, registerday, signintime], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+   }
+
+   async getUsersByName(name, type){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE ${type} = ?;`;
+         connection.query(query, [name], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+
 
 }
 
