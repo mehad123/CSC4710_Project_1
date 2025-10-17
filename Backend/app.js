@@ -28,6 +28,12 @@ const addUser = handleError(async (request, response) => {
     await users.createUser(request.body);
     response.send("ok")
 })
+const removeUser = handleError(async (request, response) => {  
+    const {username} = request.params
+    await users.deleteUser(username);
+    response.send("ok")
+})
+
 const getUsers = handleError(async (request, response) => {
     const result = await users.getAllUsers();
     response.json(result);
@@ -79,7 +85,9 @@ const getUsersNoSignIn = handleError(async (request, response) => {
 
 app.post('/users', addUser);
 app.get('/users', getUsers);
-app.get('/users/username/:username', getUser);
+app.get('/users/:username', getUser);
+app.delete('/users/:username',removeUser);
+
 app.get('/users/firstname/:firstname', getUsersFname);
 app.get('/users/lastname/:lastname', getUsersLname);
 

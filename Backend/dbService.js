@@ -59,6 +59,15 @@ class Users{
          });
       })
    }
+   async deleteUser(username){
+      await new Promise((resolve, reject) => {
+         const query = "DELETE FROM users WHERE username = ?;";
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      });
+   }
 
    async getAllUsers(){
       const result = await new Promise((resolve, reject) => {
