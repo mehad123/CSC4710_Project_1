@@ -5,12 +5,14 @@ dotenv.config();
 
 const app = express();
 
-const dbService = require('./dbService');
+const usersTable = require('./dbService');
 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+const users = usersTable.getUsersInstance()
 
 function handleError(func){
     return async (...args) => {
@@ -22,29 +24,57 @@ function handleError(func){
     }
 }
 
-
-const addUser = handleError(async (request, response) => {
+const addUser = handleError(async (request, response) => {  
+    await users.createUser(request.body);
+    response.send("ok")
 })
 const getUsers = handleError(async (request, response) => {
+    const result = await users.getAllUsers();
+    response.json(result);
 })
 const getUser = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersByName(username, "username");
+    response.json(result)
 })
 const getUsersFname = handleError(async (request, response) => {
+    const {firstname} = request.params;
+    const result = await users.getUsersByName(firstname, "firstname");
+    response.json(result)
 })
 const getUsersLname = handleError(async (request, response) => {
+    const {lastname} = request.params;
+    const result = await users.getUsersByName(lastname, "lastname");
+    response.json(result)
 })
 
 const getUsersSalary = handleError(async (request, response) => {
+    const {minSalary, maxSalary} = request.query;
+    const result = await users.getUsersBySalary(minSalary, maxSalary);
+    response.json(result);
 })
 const getUsersAge = handleError(async (request, response) => {
+    const {minAge, maxAge} = request.query;
+    const result = await users.getUsersByAge(minAge, maxAge);
+    response.json(result)
 })
 const getUsersToday = handleError(async (request, response) => {
+    const result = await users.getUsersToday();
+    response.json(result)
 })
 const getUsersAfter = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersAfterReg(username);
+    response.json(result)
 })
 const getUsersSame = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersSameReg(username);
+    response.json(result)
 })
 const getUsersNoSignIn = handleError(async (request, response) => {
+    const result = await users.getUsersNoSignIn();
+    response.json(result)
 })
 
 app.post('/users', addUser);

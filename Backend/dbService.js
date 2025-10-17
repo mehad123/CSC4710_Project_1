@@ -60,6 +60,20 @@ class Users{
       })
    }
 
+   async getAllUsers(){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users`;
+         connection.query(query, (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+
    async getUsersByName(name, type){
       //type is fully controlled by backend no risk of sql injection attack 
       const result = await new Promise((resolve, reject) => {
