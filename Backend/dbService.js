@@ -84,11 +84,11 @@ class Users{
    }
    async createUser(options){
       const {username, password, firstname, lastname,
-         salary, age, registerday, signintime} = {options};
+         salary, age, registerday} = {options};
 
       await new Promise((resolve, reject) => {
          const query = "INSERT INTO users (username, password, firstname, lastname, salary, age, registerday, signintime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-         connection.query(query, [username, password, firstname, lastname, salary, age, registerday, signintime], (err, data) => {
+         connection.query(query, [username, password, firstname, lastname, salary, age, registerday, null], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
@@ -96,9 +96,38 @@ class Users{
    }
 
    async getUsersByName(name, type){
+      //type is fully controlled by backend no risk of sql injection attack 
       const result = await new Promise((resolve, reject) => {
          const query = `SELECT * FROM users WHERE ${type} = ?;`;
          connection.query(query, [name], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+
+   async getUsersBySalary(minSalary, maxSalary){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE salary > ? AND salary < ?;`;
+         connection.query(query, [minSalary, maxSalary], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+
+   async getUsersByAge(minAge, maxAge){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE age > ? AND age < ?;`;
+         connection.query(query, [minAge, maxAge], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
