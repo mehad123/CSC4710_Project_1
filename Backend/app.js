@@ -5,69 +5,100 @@ dotenv.config();
 
 const app = express();
 
-const dbService = require('./dbService');
+const usersTable = require('./dbService');
 
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.post('/insert', async (request, response) => {
-    const {name} = request.body;
+const users = usersTable.getUsersInstance()
 
-    const db = dbService.getDbServiceInstance();
-    const result = await db.insertNewName(name)
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
+function handleError(func){
+    return async (...args) => {
+        try{
+            return await func(...args);
+        }catch(err){
+            console.error(err)
+        }
+    }
+}
 
+const addUser = handleError(async (request, response) => {  
+    await users.createUser(request.body);
+    response.send("ok")
+})
+const removeUser = handleError(async (request, response) => {  
+    const {username} = request.params
+    await users.deleteUser(username);
+    response.send("ok")
+})
 
+const getUsers = handleError(async (request, response) => {
+    const result = await users.getAllUsers();
+    response.json(result);
+})
+const getUser = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersByName(username, "username");
+    response.json(result)
+})
+const getUsersFname = handleError(async (request, response) => {
+    const {firstname} = request.params;
+    const result = await users.getUsersByName(firstname, "firstname");
+    response.json(result)
+})
+const getUsersLname = handleError(async (request, response) => {
+    const {lastname} = request.params;
+    const result = await users.getUsersByName(lastname, "lastname");
+    response.json(result)
+})
 
-app.get('/getAll', async (request, response) => {
-    const db = dbService.getDbServiceInstance();
+const getUsersSalary = handleError(async (request, response) => {
+    const {minSalary, maxSalary} = request.query;
+    const result = await users.getUsersBySalary(minSalary, maxSalary);
+    response.json(result);
+})
+const getUsersAge = handleError(async (request, response) => {
+    const {minAge, maxAge} = request.query;
+    const result = await users.getUsersByAge(minAge, maxAge);
+    response.json(result)
+})
+const getUsersToday = handleError(async (request, response) => {
+    const result = await users.getUsersToday();
+    response.json(result)
+})
+const getUsersAfter = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersAfterReg(username);
+    response.json(result)
+})
+const getUsersSame = handleError(async (request, response) => {
+    const {username} = request.params;
+    const result = await users.getUsersSameReg(username);
+    response.json(result)
+})
+const getUsersNoSignIn = handleError(async (request, response) => {
+    const result = await users.getUsersNoSignIn();
+    response.json(result)
+})
 
-    const result = await db.getAllData()
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
+app.post('/users', addUser);
+app.get('/users', getUsers);
+app.get('/users/:username', getUser);
+app.delete('/users/:username',removeUser);
 
+app.get('/users/firstname/:firstname', getUsersFname);
+app.get('/users/lastname/:lastname', getUsersLname);
 
-app.get('/search/:name', async (request, response) => { 
-    const {name} = request.params;
-    
-    const db = dbService.getDbServiceInstance();
+app.get('/users/salary', getUsersSalary);
+app.get('/users/age', getUsersAge);
 
-    let result;
-    if(name === "all") 
-       result = await db.getAllData()
-        .catch(err=>console.error(err));
-    else 
-       result = await db.searchByName(name)
-        .catch(err=>console.error(err)); 
-    response.json({data: result});
-});
+app.get('/users/today', getUsersToday);
+app.get('/users/:username/afterReg',getUsersAfter);
+app.get('/users/:username/sameReg', getUsersSame);
 
-
-app.patch('/update', async (request, response) => {
-    const{id, name} = request.body;
-
-    const db = dbService.getDbServiceInstance();
-
-    const result = await db.updateNameById(id, name)
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
-
-app.delete('/delete/:id', async (request, response) => {     
-    const {id} = request.params;
-    const db = dbService.getDbServiceInstance();
-
-    await db.deleteRowById(id)
-    .catch(err=>console.error(err));
-
-    response.json({success: true});
-});   
-
+app.get('/users/nosignin', getUsersNoSignIn);
 
 app.listen(process.env.APP_PORT, 
     () => {

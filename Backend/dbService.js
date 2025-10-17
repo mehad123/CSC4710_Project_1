@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const dotenv = require('dotenv');
 dotenv.config(); 
 
-let instance = null; 
+let instance = null;
 let connection = null;
 let reconnectTimer = null;
 
@@ -24,10 +24,15 @@ function connectToMYSQL(){
       }
       if (connection.state === "connected"){
          connection.query(`
-            CREATE TABLE IF NOT EXISTS names (
-               id INT AUTO_INCREMENT PRIMARY KEY,
-               name VARCHAR(200),
-               date_added DATE
+            CREATE TABLE IF NOT EXISTS users (
+               username VARCHAR(50) primary key,
+               password VARCHAR(50),
+               firstname VARCHAR(50),
+               lastname VARCHAR(50),
+               salary FLOAT,
+               age INTEGER,
+               registerday DATE,
+               signintime DATETIME
             );
          `);
          clearInterval(reconnectTimer);
@@ -37,110 +42,159 @@ function connectToMYSQL(){
 
 }
 
+class Users{
+   static getUsersInstance(){ 
+      instance = instance ? instance : new DbService();
+      return instance;
+   }
+   async createUser(options){
+      const {username, password, firstname, lastname,
+         salary, age, registerday} = {options};
 
-class DbService{
-   static getDbServiceInstance(){ 
-      return instance ? instance : instance = new DbService();
+      await new Promise((resolve, reject) => {
+         const query = "INSERT INTO users (username, password, firstname, lastname, salary, age, registerday, signintime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+         connection.query(query, [username, password, firstname, lastname, salary, age, registerday, null], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+   }
+   async deleteUser(username){
+      await new Promise((resolve, reject) => {
+         const query = "DELETE FROM users WHERE username = ?;";
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      });
    }
 
-   async getAllData(){
-        try{
-           const response = await new Promise((resolve, reject) => 
-              {
-                  const query = "SELECT * FROM names;";
-                  connection.query(query, 
-                       (err, results) => {
-                             if(err) reject(new Error(err.message));
-                             else resolve(results);
-                       }
-                  );
-               }
-            );
-        
-            return response;
-
-        }  catch(error){
-           console.log(error);
-        }
+   async getAllUsers(){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users`;
+         connection.query(query, (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
    }
 
-   async insertNewName(name){
-         try{
-            const dateAdded = new Date();
-            const insertId = await new Promise((resolve, reject) => 
-            {
-               const query = "INSERT INTO names (name, date_added) VALUES (?, ?);";
-               connection.query(query, [name, dateAdded], (err, result) => {
-                   if(err) reject(new Error(err.message));
-                   else resolve(result.insertId);
-               });
-            });
-            return{
-                 id: insertId,
-                 name: name,
-                 dateAdded: dateAdded
-            };
-         } catch(error){
-               console.log(error);
-         }
+   async getUsersByName(name, type){
+      //type is fully controlled by backend no risk of sql injection attack 
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE ${type} = ?;`;
+         connection.query(query, [name], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
    }
 
-   async searchByName(name){
-        try{
-             const response = await new Promise((resolve, reject) => 
-                  {
-                     const query = "SELECT * FROM names where name = ?;";
-                     connection.query(query, [name], (err, results) => {
-                         if(err) reject(new Error(err.message));
-                         else resolve(results);
-                     });
-                  }
-             );
-
-             return response;
-
-         }  catch(error){
-            console.log(error);
-         }
+   async getUsersBySalary(minSalary, maxSalary){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE salary > ? AND salary < ?;`;
+         connection.query(query, [minSalary, maxSalary], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
    }
 
-   async deleteRowById(id){
-         try{
-              id = parseInt(id, 10);
-              const response = await new Promise((resolve, reject) => 
-                  {
-                     const query = "DELETE FROM names WHERE id = ?;";
-                     connection.query(query, [id], (err, result) => {
-                          if(err) reject(new Error(err.message));
-                          else resolve(result.affectedRows);
-                     });
-                  }
-               );
-               return response === 1? true: false;
-
-         }  catch(error){
-              console.log(error);
-         }
+   async getUsersByAge(minAge, maxAge){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE age > ? AND age < ?;`;
+         connection.query(query, [minAge, maxAge], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
    }
-  
-  async updateNameById(id, newName){
-      try{
-           id = parseInt(id, 10);
-           const response = await new Promise((resolve, reject) => 
-               {
-                  const query = "UPDATE names SET name = ? WHERE id = ?;";
-                  connection.query(query, [newName, id], (err, result) => {
-                       if(err) reject(new Error(err.message));
-                       else resolve(result.affectedRows);
-                  });
-               }
-            );
 
-            return response === 1;
-      }  catch(error){
-         console.log(error);
-      }
-  }
+   async getUsersAfterReg(username){
+      let dayRegistered = await new Promise((resolve, reject) => {
+         const query = `SELECT registerday FROM users WHERE username = ?;`;
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data["registerday"]);
+         });
+      })
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday > ?;`;
+         connection.query(query, [dayRegistered], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+   async getUsersSameReg(username){
+      let dayRegistered = await new Promise((resolve, reject) => {
+         const query = `SELECT registerday FROM users WHERE username = ?;`;
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data["registerday"]);
+         });
+      })
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday = ?;`;
+         connection.query(query, [dayRegistered], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+   async getUsersToday(){
+      let today = new Date()
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday = ?;`;
+         connection.query(query, [today], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+
+   async getUsersNoSignIn(){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE signintime IS NULL;`;
+         connection.query(query, (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   } 
 }
 
-module.exports = DbService;
+
+module.exports = Users;
