@@ -40,7 +40,7 @@ app.get('/search/:name', async (request, response) => {
     let result;
     if(name === "all") 
        result = await db.getAllData()
-        .catch(err=>console.error(err));
+        .catch(err=>console.error(err)); 
     else 
        result = await db.searchByName(name)
         .catch(err=>console.error(err)); 
