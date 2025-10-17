@@ -138,7 +138,74 @@ class Users{
       return result
    }
 
+   async getUsersAfterReg(username){
+      let dayRegistered = await new Promise((resolve, reject) => {
+         const query = `SELECT registerday FROM users WHERE username = ?;`;
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data["registerday"]);
+         });
+      })
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday > ?;`;
+         connection.query(query, [dayRegistered], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+   async getUsersSameReg(username){
+      let dayRegistered = await new Promise((resolve, reject) => {
+         const query = `SELECT registerday FROM users WHERE username = ?;`;
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data["registerday"]);
+         });
+      })
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday = ?;`;
+         connection.query(query, [dayRegistered], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
+   async getUsersToday(){
+      let today = new Date()
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE registerday = ?;`;
+         connection.query(query, [today], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   }
 
+   async getUsersNoSignIn(){
+      const result = await new Promise((resolve, reject) => {
+         const query = `SELECT * FROM users WHERE signintime IS NULL;`;
+         connection.query(query, (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      })
+      result.forEach(row => {
+         delete row["password"]
+      });
+      return result
+   } 
 }
 
 
