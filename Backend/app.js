@@ -12,62 +12,55 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
-app.post('/insert', async (request, response) => {
-    const {name} = request.body;
-
-    const db = dbService.getDbServiceInstance();
-    const result = await db.insertNewName(name)
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
-
-
-
-app.get('/getAll', async (request, response) => {
-    const db = dbService.getDbServiceInstance();
-
-    const result = await db.getAllData()
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
+function handleError(func){
+    return async (...args) => {
+        try{
+            return await func(...args);
+        }catch(err){
+            console.error(err)
+        }
+    }
+}
 
 
-app.get('/search/:name', async (request, response) => { 
-    const {name} = request.params;
-    
-    const db = dbService.getDbServiceInstance();
+const addUser = handleError(async (request, response) => {
+})
+const getUsers = handleError(async (request, response) => {
+})
+const getUser = handleError(async (request, response) => {
+})
+const getUsersFname = handleError(async (request, response) => {
+})
+const getUsersLname = handleError(async (request, response) => {
+})
 
-    let result;
-    if(name === "all") 
-       result = await db.getAllData()
-        .catch(err=>console.error(err)); 
-    else 
-       result = await db.searchByName(name)
-        .catch(err=>console.error(err)); 
-    response.json({data: result});
-});
+const getUsersSalary = handleError(async (request, response) => {
+})
+const getUsersAge = handleError(async (request, response) => {
+})
+const getUsersToday = handleError(async (request, response) => {
+})
+const getUsersAfter = handleError(async (request, response) => {
+})
+const getUsersSame = handleError(async (request, response) => {
+})
+const getUsersNoSignIn = handleError(async (request, response) => {
+})
 
+app.post('/users', addUser);
+app.get('/users', getUsers);
+app.get('/users/username/:username', getUser);
+app.get('/users/firstname/:firstname', getUsersFname);
+app.get('/users/lastname/:lastname', getUsersLname);
 
-app.patch('/update', async (request, response) => {
-    const{id, name} = request.body;
+app.get('/users/salary', getUsersSalary);
+app.get('/users/age', getUsersAge);
 
-    const db = dbService.getDbServiceInstance();
+app.get('/users/today', getUsersToday);
+app.get('/users/:username/afterReg',getUsersAfter);
+app.get('/users/:username/sameReg', getUsersSame);
 
-    const result = await db.updateNameById(id, name)
-    .catch(err=>console.error(err));
-    response.json({data: result});
-});
-
-app.delete('/delete/:id', async (request, response) => {     
-    const {id} = request.params;
-    const db = dbService.getDbServiceInstance();
-
-    await db.deleteRowById(id)
-    .catch(err=>console.error(err));
-
-    response.json({success: true});
-});   
-
+app.get('/users/nosignin', getUsersNoSignIn);
 
 app.listen(process.env.APP_PORT, 
     () => {

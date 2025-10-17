@@ -42,41 +42,6 @@ function connectToMYSQL(){
 
 }
 
-// making a query
-// const query = "SELECT * FROM users;";
-// connection.query(query, (err, results) => {
-//       if(err) reject(new Error(err.message));
-//       else resolve(results);
-// });
-
-// insert query
-// const query = "INSERT INTO names (name, date_added) VALUES (?, ?);";
-// connection.query(query, [name, dateAdded], (err, result) => {
-//       if(err) reject(new Error(err.message));
-//       else resolve(result.insertId);
-// });
-
-//ANOTHA ONE
-// const query = "SELECT * FROM names where name = ?;";
-// connection.query(query, [name], (err, results) => {
-//       if(err) reject(new Error(err.message));
-//       else resolve(results);
-// });
-
-// ANOTHA ONE
-// const query = "DELETE FROM names WHERE id = ?;";
-// connection.query(query, [id], (err, result) => {
-//       if(err) reject(new Error(err.message));
-//       else resolve(result.affectedRows);
-// });
-
-// TELL EM TO BRING OUT THE WHOLE OCEAN
-// const query = "UPDATE names SET name = ? WHERE id = ?;";
-// connection.query(query, [newName, id], (err, result) => {
-//       if(err) reject(new Error(err.message));
-//       else resolve(result.affectedRows);
-// });
-
 class Users{
    static getUsersInstance(){ 
       instance = instance ? instance : new DbService();
@@ -209,4 +174,4 @@ class Users{
 }
 
 
-module.exports = DbService;
+module.exports = Users;
