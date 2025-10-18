@@ -44,20 +44,28 @@ function connectToMYSQL(){
 
 class Users{
    static getUsersInstance(){ 
-      instance = instance ? instance : new DbService();
+      instance = instance ? instance : new Users();
       return instance;
    }
    async createUser(options){
       const {username, password, firstname, lastname,
-         salary, age, registerday} = {options};
-
+         salary, age} = options;
       await new Promise((resolve, reject) => {
          const query = "INSERT INTO users (username, password, firstname, lastname, salary, age, registerday, signintime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-         connection.query(query, [username, password, firstname, lastname, salary, age, registerday, null], (err, data) => {
+         connection.query(query, [username, password, firstname, lastname, salary, age, new Date(), null], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
+      });
+      let dayRegistered = await new Promise((resolve, reject) => {
+         const query = `SELECT registerday FROM users WHERE username = ?;`;
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else if(!data[0]) reject(new Error("no user"))
+               else resolve(data[0]["registerday"]);
+         });
+      });
+      console.log(dayRegistered)
    }
    async deleteUser(username){
       await new Promise((resolve, reject) => {
@@ -76,11 +84,11 @@ class Users{
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
 
    async getUsersByName(name, type){
@@ -91,11 +99,11 @@ class Users{
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
 
    async getUsersBySalary(minSalary, maxSalary){
@@ -105,11 +113,11 @@ class Users{
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
 
    async getUsersByAge(minAge, maxAge){
@@ -119,11 +127,11 @@ class Users{
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
 
    async getUsersAfterReg(username){
@@ -131,54 +139,55 @@ class Users{
          const query = `SELECT registerday FROM users WHERE username = ?;`;
          connection.query(query, [username], (err, data) => {
                if(err) reject(new Error(err.message));
-               else resolve(data["registerday"]);
+               else if(!data[0]) reject(new Error("no user"));
+               else resolve(data[0]["registerday"]);
          });
-      })
+      });
       const result = await new Promise((resolve, reject) => {
-         const query = `SELECT * FROM users WHERE registerday > ?;`;
+         const query = `SELECT * FROM users WHERE DATE(registerday) > DATE(?);`;
          connection.query(query, [dayRegistered], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
    async getUsersSameReg(username){
       let dayRegistered = await new Promise((resolve, reject) => {
          const query = `SELECT registerday FROM users WHERE username = ?;`;
          connection.query(query, [username], (err, data) => {
                if(err) reject(new Error(err.message));
-               else resolve(data["registerday"]);
+               else if(!data[0]) reject(new Error("no user"));
+               else resolve(data[0]["registerday"]);
          });
-      })
+      });
       const result = await new Promise((resolve, reject) => {
-         const query = `SELECT * FROM users WHERE registerday = ?;`;
+         const query = `SELECT * FROM users WHERE DATE(registerday) = DATE(?);`;
          connection.query(query, [dayRegistered], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
    async getUsersToday(){
-      let today = new Date()
       const result = await new Promise((resolve, reject) => {
-         const query = `SELECT * FROM users WHERE registerday = ?;`;
-         connection.query(query, [today], (err, data) => {
+         const query = `SELECT * FROM users WHERE DATE(registerday) = CURDATE();`;
+         connection.query(query, (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    }
 
    async getUsersNoSignIn(){
@@ -188,13 +197,14 @@ class Users{
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
-      })
-      result.forEach(row => {
-         delete row["password"]
       });
-      return result
+      result.forEach(row => {
+         delete row["password"];
+      });
+      return result;
    } 
 }
 
 
 module.exports = Users;
+ 
