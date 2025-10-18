@@ -76,6 +76,26 @@ class Users{
          });
       });
    }
+   async validateLogin(username, password){
+      const result = await new Promise((resolve, reject) => {
+         const query = "SELECT 1 FROM users WHERE username = ? AND password = ?;";
+         connection.query(query, [username, password], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      });
+      if (result.length === 0){
+         return {exists: false }
+      }
+      await new Promise((resolve, reject) => {
+         const query = "UPDATE users SET signintime = ? WHERE username = ?;";
+         connection.query(query, [new Date(), username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      });
+      return {exists: true}
+   }
 
    async getAllUsers(){
       const result = await new Promise((resolve, reject) => {

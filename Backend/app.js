@@ -36,6 +36,11 @@ const removeUser = handleError(async (request, response) => {
     await users.deleteUser(username);
     response.send("ok");
 });
+const logInUser = handleError(async (request, response) => {  
+    const {username, password} = request.body;
+    const result = await users.validateLogin(username, password);
+    response.json(result);
+});
 
 const getUsers = handleError(async (request, response) => {
     const result = await users.getAllUsers();
@@ -94,6 +99,7 @@ const getUsersNoSignIn = handleError(async (request, response) => {
 app.get('/users/firstname/:firstname', getUsersFname);
 app.get('/users/lastname/:lastname', getUsersLname);
 
+
 app.get('/users/today', getUsersToday);
 app.get('/users/nosignin', getUsersNoSignIn);
 app.get('/users/afterReg/:username',getUsersAfter);
@@ -104,6 +110,7 @@ app.get('/users/age', getUsersAge);
 
 app.post('/users', multerFormParser.none(),addUser);
 app.get('/users', getUsers);
+app.get("/users/login", multerFormParser.none(), logInUser)
 app.get('/users/:username', getUser);
 app.delete('/users/:username',removeUser);
 
