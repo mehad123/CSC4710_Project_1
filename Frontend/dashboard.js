@@ -49,6 +49,9 @@ form.addEventListener("submit", async (e) => {
         case "nosignin":
             response = await fetch(backendURL + `/users/nosignin`);
             break;
+        case "all":
+            response = await fetch(backendURL + `/users`);
+            break;
     }
     if (!response.ok){
         console.error("Query failed!");

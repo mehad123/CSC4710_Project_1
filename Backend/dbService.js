@@ -108,8 +108,17 @@ class Users{
 
    async getUsersBySalary(minSalary, maxSalary){
       const result = await new Promise((resolve, reject) => {
-         const query = `SELECT * FROM users WHERE salary > ? AND salary < ?;`;
-         connection.query(query, [minSalary, maxSalary], (err, data) => {
+         let query = `SELECT * FROM users WHERE 1=1`;
+         let params = [];
+         if (minSalary) {
+            query += " AND salary > ?";
+            params.push(minSalary);
+         }
+         if (maxSalary) {
+            query += " AND salary < ?";
+            params.push(maxSalary);
+         }
+         connection.query(query, params, (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
@@ -122,8 +131,17 @@ class Users{
 
    async getUsersByAge(minAge, maxAge){
       const result = await new Promise((resolve, reject) => {
-         const query = `SELECT * FROM users WHERE age > ? AND age < ?;`;
-         connection.query(query, [minAge, maxAge], (err, data) => {
+         let query = `SELECT * FROM users WHERE 1=1`;
+         let params = [];
+         if (minAge){
+            query += " AND age > ?";
+            params.push(minAge)
+         } 
+         if (maxAge){
+            query += " AND age < ?"
+            params.push(maxAge)
+         } 
+         connection.query(query, params, (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
