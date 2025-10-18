@@ -1,12 +1,14 @@
 const backendURL = "http://localhost:5050";
+
 const form = document.getElementById("search-form");
 
 
 document.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch(backendURL + `/users`);
-    queries = response.json();
+    const queries = await response.json();
+    console.log(queries)
 
-    loadTable(queries)
+    loadTable(queries);
 });
 
 form.addEventListener("submit", async (e) => {
@@ -15,55 +17,56 @@ form.addEventListener("submit", async (e) => {
     const fields = Object.fromEntries((new FormData(form)).entries());
 
     let response;
-    let urlQuery;
+    let urlQueries;
     let queries;
-    switch (fields["action"]){
+    switch (e.submitter.value){
         case "username":
             response = await fetch(backendURL + `/users/${fields["username"]}`);
-            queries = response.json();
-            break
+            break;
         case "firstname":
             response = await fetch(backendURL + `/users/firstname/${fields["firstname"]}`);
-            queries = response.json();
-            break
+            break;
         case "lastname":
             response = await fetch(backendURL + `/users/lastname/${fields["lastname"]}`);
-            queries = response.json();
-            break
+            break;
         case "salary":
-            urlQuery = `minSalary=${encodeURIComponent(fields["minSalary"])}&maxSalary=${encodeURIComponent(fields["maxSalary"])}`;
-            response = await fetch(backendURL + `/users/salary?${urlQuery}`);
-            queries = response.json()
-            break
+            urlQueries = `minSalary=${encodeURIComponent(fields["minSalary"])}&maxSalary=${encodeURIComponent(fields["maxSalary"])}`;
+            response = await fetch(backendURL + `/users/salary?${urlQueries}`);
+            break;
         case "age":
-            urlQuery = `minAge=${encodeURIComponent(fields["minAge"])}&maxAge=${encodeURIComponent(fields["maxAge"])}`;
-            response = await fetch(backendURL + `/users/age?${urlQuery}`);
-            queries = response.json()
-            break
+            urlQueries = `minAge=${encodeURIComponent(fields["minAge"])}&maxAge=${encodeURIComponent(fields["maxAge"])}`;
+            response = await fetch(backendURL + `/users/age?${urlQueries}`);
+            break;
         case "registeredAfter":
-            response = await fetch(backendURL + `/users/afterReg/${fields["username"]}`);
-            queries = response.json();
-            break
+            response = await fetch(backendURL + `/users/afterReg/${fields["regAfterUser"]}`);
+            break;
         case "registeredCurrent":
-            response = await fetch(backendURL + `/users/sameReg/${fields["username"]}`);
-            queries = response.json();
-            break
+            response = await fetch(backendURL + `/users/sameReg/${fields["regSameUser"]}`);
+            break;
         case "registeredToday":
             response = await fetch(backendURL + `/users/today`);
-            queries = response.json();
-            break
+            break;
         case "nosignin":
             response = await fetch(backendURL + `/users/nosignin`);
-            queries = response.json();
-            break
+            break;
+        case "all":
+            response = await fetch(backendURL + `/users`);
+            break;
     }
+    if (!response.ok){
+        console.error("Query failed!");
+        queries = []
+    }else{
+         queries = await response.json();
+    }
+   
     loadTable(queries);
-})
+});
 
 function loadTable(queries){
-
+    console.log(queries);
     const tBody = document.getElementById("user-entries");
-    let content = ""
+    let content = "";
     
     queries.forEach(row => {
         content += `<tr>
@@ -72,10 +75,10 @@ function loadTable(queries){
             <td>${row["lastname"]}</td>
             <td>${row["salary"]}</td>
             <td>${row["age"]}</td>
-            <td>${row["registerday"]}</td>
+            <td>${row["registerday"].split("T")[0]}</td>
             <td>${row["signintime"]}</td>
         </tr>
-        `
-    })
-    tBody.innerHTML = content
+        `;
+    });
+    tBody.innerHTML = content;
 }

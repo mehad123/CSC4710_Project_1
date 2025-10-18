@@ -7,7 +7,7 @@
     </head>
     <body>
         <a href="index.html"><button>Back to Home</button></a>
-        <form action="https://localhost:5050/createUser" method="post">
+        <form id="create-form" method="post">
             <h1>Sign Up</h1>
             <fieldset>
                 <ul>
@@ -55,5 +55,32 @@
             </fieldset>
             <button type="submit">Create Account</button>
         </form>
+        <p id="create-error"></p>
+        <script>
+            const form = document.getElementById("create-form");
+            const errMssg = document.getElementById("create-error");
+            let timeoutID;
+
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                console.log(form)
+                console.log(new FormData(form))
+                const response = await fetch("http://localhost:5050/users",{
+                    method: "POST",
+                    body: new FormData(form)
+                });
+
+                const result = await response.text();
+                if (result !== "ok"){
+                    clearTimeout(timeoutID);
+                    errMssg.innerText = "Failed to create new user!";
+                    timeoutID = setTimeout(()=>{
+                        errMssg.innerText = "";
+                    },1000);
+                    return
+                }
+                window.location.href = "dashboard.html";
+            })
+        </script>
     </body>
 </html>
