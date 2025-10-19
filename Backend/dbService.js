@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const dotenv = require('dotenv');
+const bcrypt = require("bcrypt");
 dotenv.config(); 
 
 let instance = null;
@@ -26,7 +27,7 @@ function connectToMYSQL(){
          connection.query(`
             CREATE TABLE IF NOT EXISTS users (
                username VARCHAR(50) primary key,
-               password VARCHAR(50),
+               password VARCHAR(100),
                firstname VARCHAR(50),
                lastname VARCHAR(50),
                salary FLOAT,
@@ -50,9 +51,11 @@ class Users{
    async createUser(options){
       const {username, password, firstname, lastname,
          salary, age} = options;
+
+      const hashedPass = await bcrypt.hash(password, 10);
       await new Promise((resolve, reject) => {
          const query = "INSERT INTO users (username, password, firstname, lastname, salary, age, registerday, signintime) VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
-         connection.query(query, [username, password, firstname, lastname, salary, age, new Date(), null], (err, data) => {
+         connection.query(query, [username, hashedPass, firstname, lastname, salary, age, new Date(), null], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
@@ -77,14 +80,15 @@ class Users{
       });
    }
    async validateLogin(username, password){
-      const result = await new Promise((resolve, reject) => {
-         const query = "SELECT 1 FROM users WHERE username = ? AND password = ?;";
-         connection.query(query, [username, password], (err, data) => {
+      const realPassword = await new Promise((resolve, reject) => {
+         const query = "SELECT password FROM users WHERE username = ?;";
+         connection.query(query, [username], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);
          });
       });
-      if (result.length === 0){
+      const validPass = realPassword.length === 0 ? null : await bcrypt.compare(password, realPassword[0]["password"])
+      if (!validPass){
          return {success: false }
       }
       await new Promise((resolve, reject) => {
@@ -94,6 +98,7 @@ class Users{
                else resolve(data);
          });
       });
+      
       return {success: true}
    }
 

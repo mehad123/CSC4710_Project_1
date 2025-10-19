@@ -10,25 +10,41 @@
       padding: 10px;
     }
   </style>
+  <script>
+      const isLoggedIn = sessionStorage.getItem("loggedIn");
+      if (isLoggedIn && isLoggedIn === "1"){
+          window.location.href = "dashboard.html"
+      }
+  </script>
 </head>
 <body>
   <main>
  
     <button id="back-btn">Back to Home</button>
-
+  
     <h1>Sign In</h1>
-      <div class="border">
-        <label>Username:</label>
-        <input type="text" id="username-input">
+
+      <form id="login-form" method="post">
+        <div class="border">
+          <label>
+            Username:
+            <input type="text" name="username">
+          </label>
+          
+          <br><br>
+          <label>
+            Password:
+            <input id="loginpass" type="password" name="password">
+            <button type="button" id="show-loginpass">show</button>
+          </label>
+          
+          <br><br>
+          <p id="error-msg"></p>
+        </div>
+        <br>
+          <button type="submit">Sign In</button>
         <br><br>
-        <label>Password:</label>
-        <input type="password" id="password-input">
-        <br><br>
-        <p id="error-msg"></p>
-      </div>
-      <br>
-        <button id="submit-btn">Sign In</button>
-        <br><br>
+      </form>
 
 
 </main>
