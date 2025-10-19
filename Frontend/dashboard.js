@@ -69,6 +69,8 @@ function loadTable(queries){
     let content = "";
     
     queries.forEach(row => {
+
+
         content += `<tr>
             <td>${row["username"]}</td>
             <td>${row["firstname"]}</td>
@@ -76,7 +78,17 @@ function loadTable(queries){
             <td>${row["salary"]}</td>
             <td>${row["age"]}</td>
             <td>${row["registerday"].split("T")[0]}</td>
-            <td>${row["signintime"]}</td>
+            <td>${row["signintime"] ? 
+                new Date(row["signintime"]).toLocaleString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })
+                :
+                null
+            }</td>
         </tr>
         `;
     });
