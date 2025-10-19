@@ -110,7 +110,7 @@ app.get('/users/age', getUsersAge);
 
 app.post('/users', multerFormParser.none(),addUser);
 app.get('/users', getUsers);
-app.get("/users/login", multerFormParser.none(), logInUser)
+app.post("/users/login", multerFormParser.none(), logInUser)
 app.get('/users/:username', getUser);
 app.delete('/users/:username',removeUser);
 
