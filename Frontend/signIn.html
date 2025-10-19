@@ -10,6 +10,12 @@
       padding: 10px;
     }
   </style>
+  <script>
+      const isLoggedIn = sessionStorage.getItem("loggedIn");
+      if (isLoggedIn && isLoggedIn === "1"){
+          window.location.href = "dashboard.html"
+      }
+  </script>
 </head>
 <body>
   <main>
@@ -28,7 +34,8 @@
           <br><br>
           <label>
             Password:
-            <input type="password" name="password">
+            <input id="loginpass" type="password" name="password">
+            <button type="button" id="show-loginpass">show</button>
           </label>
           
           <br><br>

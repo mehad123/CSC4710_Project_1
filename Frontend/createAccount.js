@@ -20,5 +20,14 @@ form.addEventListener("submit", async (e) => {
         },1000);
         return
     }
-    window.location.href = "dashboard.html";
+    alert("Successfully created account!");
+    window.location.href = "signIn.html";
 })
+
+
+const pass = document.getElementById("createpass");
+const toggleVis = document.getElementById("show-createpass");
+toggleVis.onclick = (e) =>{
+    pass.type = pass.type === "password" ? "text" : "password";
+    toggleVis.innerText = pass.type === "password" ? "show" : "hide"
+}

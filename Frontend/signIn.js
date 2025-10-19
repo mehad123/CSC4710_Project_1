@@ -24,6 +24,7 @@ form.addEventListener("submit", async (e)=>{
         if (data && data.success) {
             console.log("Login successful!");
             alert("Login successful!");
+            sessionStorage.setItem("loggedIn", "1")
             window.location.href = "dashboard.html";
         } else {
             console.error("Sign-in failed:", data.message || data);
@@ -43,3 +44,10 @@ backBtn.onclick = function() {
     console.log("back clicked");
     window.location.href = "index.html";
 };
+
+const pass = document.getElementById("loginpass");
+const toggleVis = document.getElementById("show-loginpass");
+toggleVis.onclick = (e) =>{
+    pass.type = pass.type === "password" ? "text" : "password";
+    toggleVis.innerText = pass.type === "password" ? "show" : "hide"
+}

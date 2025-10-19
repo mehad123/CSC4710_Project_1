@@ -24,6 +24,12 @@
                 text-decoration: none;
             }
         </style>
+        <script>
+            const isLoggedIn = sessionStorage.getItem("loggedIn");
+            if (isLoggedIn && isLoggedIn === "1"){
+                window.location.href = "dashboard.html"
+            }
+        </script>
     </head>
     <body>
         <main>

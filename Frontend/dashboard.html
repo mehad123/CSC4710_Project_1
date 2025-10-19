@@ -9,8 +9,19 @@
                 display: block;
             }
         </style>
+        <script>
+            const isLoggedIn = sessionStorage.getItem("loggedIn");
+            if (!isLoggedIn || isLoggedIn !== "1"){
+                window.location.href = "index.html"
+            }
+        </script>
+    </head>
     <body>
-        <a href="index.html"><button>Sign Out</button></a>
+        <button onclick="
+            sessionStorage.setItem('loggedIn','0');
+            window.location.href = 'index.html';">
+            Sign Out
+        </button>
        <h1>Dashboard</h1> 
        <form id="search-form">
             <fieldset>

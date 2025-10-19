@@ -4,6 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Sign up</title>
+        <script>
+            const isLoggedIn = sessionStorage.getItem("loggedIn");
+            if (isLoggedIn && isLoggedIn === "1"){
+                window.location.href = "dashboard.html"
+            }
+        </script>
     </head>
     <body>
         <a href="index.html"><button>Back to Home</button></a>
@@ -33,7 +39,8 @@
                     <li>
                         <label >
                             Password
-                            <input name="password" type="text" required>
+                            <input id="createpass" type="password" name="password" required>
+                            <button type="button" id="show-createpass">show</button>
                         </label>
                     </li>
                 </ul>
