@@ -27,7 +27,8 @@ submitBtn.onclick = function() {
     .then(data => {
         if (data && data.success) {
             console.log("Login successful!");
-            window.location.href = "index.html";
+            alert("Login successful!");
+            window.location.href = "dashboard.html";
         } else {
             console.error("Sign-in failed:", data.message || data);
             alert("Invalid username or password!");

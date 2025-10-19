@@ -3,24 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="stylesheet.css">
-  <title>DB Project 1 new</title>
+  <title>Sign in</title>
+  <style>
+    .border {
+      border: 1px solid black;
+      padding: 10px;
+    }
+  </style>
 </head>
 <body>
   <main>
  
-    <h2>Sign In</h2>
-     <br>
+    <button id="back-btn">Back to Home</button>
 
+    <h1>Sign In</h1>
+      <div class="border">
         <label>Username:</label>
         <input type="text" id="username-input">
         <br><br>
         <label>Password:</label>
         <input type="password" id="password-input">
         <br><br>
-        <button id="submit-btn">Submit</button>
-        <button id="back-btn">Back</button>
         <p id="error-msg"></p>
+      </div>
+      <br>
+        <button id="submit-btn">Sign In</button>
         <br><br>
 
 
