@@ -94,6 +94,7 @@ class Users{
                else resolve(data);
          });
       });
+      
       return {success: true}
    }
 

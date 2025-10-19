@@ -1,27 +1,23 @@
-const usernameInput = document.querySelector('#username-input');
-const passwordInput = document.querySelector('#password-input');
-const submitBtn = document.querySelector('#submit-btn');
+const form = document.getElementById("login-form");
 const backBtn = document.querySelector('#back-btn');
 const errorMsg = document.querySelector('#error-msg'); 
 
-submitBtn.onclick = function() {
-    console.log("submit clicked");
-    const username = usernameInput.value;
-    const password = passwordInput.value;
+form.addEventListener("submit", async (e)=>{
+    e.preventDefault();
+
+    const fields = Object.fromEntries((new FormData(form)).entries());
+
+
+    const {username, password} = fields;
 
     if (!username || !password) {
         errorMsg.textContent = "Please enter both username and password.";
         errorMsg.style.color = "red";
         return;
     }
-
-    fetch('http://localhost:5050/users/login', {
-        headers: { 'Content-Type': 'application/json' },
-        method: 'POST',
-        body: JSON.stringify({
-            username: username,
-            password: password
-        })
+    await fetch("http://localhost:5050/users/login",{
+        method: "POST",
+        body: new FormData(form)
     })
     .then(response => response.json())
     .then(data => {
@@ -41,9 +37,8 @@ submitBtn.onclick = function() {
         errorMsg.textContent = "Server error. Please try again later.";
         errorMsg.style.color = "red";
     });
-};
+})
 
-// when the back button is clicked
 backBtn.onclick = function() {
     console.log("back clicked");
     window.location.href = "index.html";
