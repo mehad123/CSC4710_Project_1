@@ -85,7 +85,7 @@ class Users{
          });
       });
       if (result.length === 0){
-         return {exists: false }
+         return {success: false }
       }
       await new Promise((resolve, reject) => {
          const query = "UPDATE users SET signintime = ? WHERE username = ?;";
@@ -94,7 +94,7 @@ class Users{
                else resolve(data);
          });
       });
-      return {exists: true}
+      return {success: true}
    }
 
    async getAllUsers(){
