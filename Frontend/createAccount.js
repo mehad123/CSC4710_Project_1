@@ -4,8 +4,8 @@ let timeoutID;
 
 form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    console.log(form)
-    console.log(new FormData(form))
+    console.log(form);
+    console.log(new FormData(form));
     const response = await fetch("http://localhost:5050/users",{
         method: "POST",
         body: new FormData(form)
@@ -19,16 +19,16 @@ form.addEventListener("submit", async (e) => {
         timeoutID = setTimeout(()=>{
             errMssg.innerText = "";
         },1000);
-        return
+        return;
     }
     alert("Successfully created account!");
     window.location.href = "signIn.html";
-})
+});
 
 
 const pass = document.getElementById("createpass");
 const toggleVis = document.getElementById("show-createpass");
-toggleVis.onclick = (e) =>{
+toggleVis.onclick = () =>{
     pass.type = pass.type === "password" ? "text" : "password";
-    toggleVis.innerText = pass.type === "password" ? "show" : "hide"
-}
+    toggleVis.innerText = pass.type === "password" ? "show" : "hide";
+};

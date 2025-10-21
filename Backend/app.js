@@ -22,7 +22,7 @@ function handleError(func){
             return await func(req, res);
         }catch(err){
             console.error(err);
-            res.status(500).send("error")
+            res.status(500).send("error");
         }
     };
 }
@@ -79,7 +79,7 @@ const getUsersAge = handleError(async (request, response) => {
     response.json(result);
 });
 const getUsersToday = handleError(async (request, response) => {
-    console.log("hola")
+    console.log("hola");
     const result = await users.getUsersToday();
     response.json(result);
 });
@@ -90,7 +90,7 @@ const getUsersAfter = handleError(async (request, response) => {
 });
 const getUsersSame = handleError(async (request, response) => {
     const {username} = request.params;
-    console.log(username)
+    console.log(username);
     const result = await users.getUsersSameReg(username);
     response.json(result);
 });
@@ -115,10 +115,10 @@ app.get('/users/age', getUsersAge);
 
 app.post('/users', multerFormParser.none(),addUser);
 app.get('/users', getUsers);
-app.post("/users/login", multerFormParser.none(), logInUser)
+app.post("/users/login", multerFormParser.none(), logInUser);
 app.get('/users/:username', getUser);
 app.delete('/users/:username',removeUser);
-app.patch("/users/:username", updateUser)
+app.patch("/users/:username", updateUser);
 
 app.listen(process.env.APP_PORT, 
     () => {

@@ -24,7 +24,7 @@ form.addEventListener("submit", async (e)=>{
         if (data && data.success) {
             console.log("Login successful!");
             alert("Login successful!");
-            sessionStorage.setItem("loggedIn", username)
+            sessionStorage.setItem("loggedIn", username);
             window.location.href = "dashboard.html";
         } else {
             console.error("Sign-in failed:", data.message || data);
@@ -38,7 +38,7 @@ form.addEventListener("submit", async (e)=>{
         errorMsg.textContent = "Server error. Please try again later.";
         errorMsg.style.color = "red";
     });
-})
+});
 
 backBtn.onclick = function() {
     console.log("back clicked");
@@ -47,7 +47,7 @@ backBtn.onclick = function() {
 
 const pass = document.getElementById("loginpass");
 const toggleVis = document.getElementById("show-loginpass");
-toggleVis.onclick = (e) =>{
+toggleVis.onclick = () =>{
     pass.type = pass.type === "password" ? "text" : "password";
-    toggleVis.innerText = pass.type === "password" ? "show" : "hide"
-}
+    toggleVis.innerText = pass.type === "password" ? "show" : "hide";
+};

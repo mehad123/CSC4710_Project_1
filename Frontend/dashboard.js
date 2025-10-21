@@ -6,7 +6,7 @@ const form = document.getElementById("search-form");
 document.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch(backendURL + `/users`);
     const queries = await response.json();
-    console.log(queries)
+    console.log(queries);
 
     loadTable(queries);
 });
@@ -55,7 +55,7 @@ form.addEventListener("submit", async (e) => {
     }
     if (!response.ok){
         console.error("Query failed!");
-        queries = []
+        queries = [];
     }else{
          queries = await response.json();
     }
@@ -93,7 +93,7 @@ function loadTable(queries){
                     <button id="submitedits" onclick='submitEdits()'>Submit</button>
                 </td>
             </tr>`;
-            return
+            return;
         }
         content += `<tr>
             <td>${row["username"]}</td>
@@ -123,8 +123,9 @@ async function deleteAccount(){
         method: "DELETE",
     });
     if (!response.ok){
-        return
+        return;
     }
+    sessionStorage.removeItem("loggedIn");
     window.location.href = "index.html";
 }   
 const savedFields = {
@@ -132,7 +133,7 @@ const savedFields = {
     "age": null,
     "firstname": null,
     "lastname": null
-}
+};
 async function toggleEdits() {
     const isEditing = document.querySelectorAll(".canedit input").length > 0;
     document.getElementById("submitedits").hidden = isEditing;
@@ -144,7 +145,7 @@ async function toggleEdits() {
             savedFields[elem.dataset.type] = elem.textContent;
             elem.innerHTML = `<input type="text" value="${elem.textContent}">`;
         }
-    })
+    });
 
 }
 
@@ -153,17 +154,17 @@ async function submitEdits() {
     document.querySelectorAll(".canedit").forEach(elem=>{
         const input = elem.querySelector("input");
         fields[elem.dataset.type] = input.value;
-    })
+    });
     const response = await fetch(backendURL + `/users/${sessionStorage.getItem("loggedIn")}`, {
         "method": "PATCH",
         "headers": {"Content-Type": "application/json"},
         "body": JSON.stringify(fields)
-    })
+    });
     if (!response.ok){
         alert("Edit Failed");
         return;
     }
     alert("Edit Succeeded!");
     toggleEdits();
-    return
+    return;
 }

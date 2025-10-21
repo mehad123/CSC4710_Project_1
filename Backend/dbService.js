@@ -72,7 +72,7 @@ class Users{
    }
    async updateUser(username, fields){
       const colUpdates = Object.entries(fields).map(pair=>{
-         return `${pair[0]} = ${typeof pair[1] === "number" ? pair[1] : `'${pair[1]}'`}`
+         return `${pair[0]} = ${typeof pair[1] === "number" ? pair[1] : `'${pair[1]}'`}`;
       }).join(", ");
       await new Promise((resolve, reject) => {
          const query = `UPDATE users SET ${colUpdates} WHERE username = ?;`;
@@ -90,9 +90,9 @@ class Users{
                else resolve(data);
          });
       });
-      const validPass = realPassword.length === 0 ? null : await bcrypt.compare(password, realPassword[0]["password"])
+      const validPass = realPassword.length === 0 ? null : await bcrypt.compare(password, realPassword[0]["password"]);
       if (!validPass){
-         return {success: false }
+         return {success: false };
       }
       await new Promise((resolve, reject) => {
          const query = "UPDATE users SET signintime = ? WHERE username = ?;";
@@ -102,7 +102,7 @@ class Users{
          });
       });
       
-      return {success: true}
+      return {success: true};
    }
 
    async getAllUsers(){
@@ -163,11 +163,11 @@ class Users{
          let params = [];
          if (minAge){
             query += " AND age > ?";
-            params.push(minAge)
+            params.push(minAge);
          } 
          if (maxAge){
-            query += " AND age < ?"
-            params.push(maxAge)
+            query += " AND age < ?";
+            params.push(maxAge);
          } 
          connection.query(query, params, (err, data) => {
                if(err) reject(new Error(err.message));
