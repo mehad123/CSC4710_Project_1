@@ -60,19 +60,22 @@ class Users{
                else resolve(data);
          });
       });
-      let dayRegistered = await new Promise((resolve, reject) => {
-         const query = `SELECT registerday FROM users WHERE username = ?;`;
-         connection.query(query, [username], (err, data) => {
-               if(err) reject(new Error(err.message));
-               else if(!data[0]) reject(new Error("no user"))
-               else resolve(data[0]["registerday"]);
-         });
-      });
-      console.log(dayRegistered)
    }
    async deleteUser(username){
       await new Promise((resolve, reject) => {
          const query = "DELETE FROM users WHERE username = ?;";
+         connection.query(query, [username], (err, data) => {
+               if(err) reject(new Error(err.message));
+               else resolve(data);
+         });
+      });
+   }
+   async updateUser(username, fields){
+      const colUpdates = Object.entries(fields).map(pair=>{
+         return `${pair[0]} = ${typeof pair[1] === "number" ? pair[1] : `'${pair[1]}'`}`
+      }).join(", ");
+      await new Promise((resolve, reject) => {
+         const query = `UPDATE users SET ${colUpdates} WHERE username = ?;`;
          connection.query(query, [username], (err, data) => {
                if(err) reject(new Error(err.message));
                else resolve(data);

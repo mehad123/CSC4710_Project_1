@@ -15,6 +15,7 @@ form.addEventListener("submit", async (e) => {
     if (result !== "ok"){
         clearTimeout(timeoutID);
         errMssg.innerText = "Failed to create new user!";
+        alert("Failed to create new user!");
         timeoutID = setTimeout(()=>{
             errMssg.innerText = "";
         },1000);

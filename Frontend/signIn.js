@@ -15,7 +15,7 @@ form.addEventListener("submit", async (e)=>{
         errorMsg.style.color = "red";
         return;
     }
-    await fetch("http://localhost:5050/users/login",{
+    fetch("http://localhost:5050/users/login",{
         method: "POST",
         body: new FormData(form)
     })
@@ -24,7 +24,7 @@ form.addEventListener("submit", async (e)=>{
         if (data && data.success) {
             console.log("Login successful!");
             alert("Login successful!");
-            sessionStorage.setItem("loggedIn", "1")
+            sessionStorage.setItem("loggedIn", username)
             window.location.href = "dashboard.html";
         } else {
             console.error("Sign-in failed:", data.message || data);

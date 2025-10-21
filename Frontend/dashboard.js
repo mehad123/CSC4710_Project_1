@@ -69,8 +69,33 @@ function loadTable(queries){
     let content = "";
     
     queries.forEach(row => {
-
-
+        if (row["username"] === sessionStorage.getItem("loggedIn")){
+            content += `<tr>
+                <td>${row["username"]}</td>
+                <td class="canedit" data-type="firstname">${row["firstname"]} </td>
+                <td class="canedit" data-type="lastname">${row["lastname"]}</td>
+                <td class="canedit" data-type="salary">${row["salary"]}</td>
+                <td class="canedit" data-type="age">${row["age"]}</td>
+                <td>${row["registerday"].split("T")[0]}</td>
+                <td>${row["signintime"] ? 
+                    new Date(row["signintime"]).toLocaleString("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                    })
+                    :
+                    null
+                }</td>
+                <td>
+                    <button onclick='deleteAccount()'>Delete</button>
+                    <button id="toggleedit" onclick='toggleEdits()'>Edit</button>
+                    <button id="submitedits" onclick='submitEdits()'>Submit</button>
+                </td>
+            </tr>`;
+            return
+        }
         content += `<tr>
             <td>${row["username"]}</td>
             <td>${row["firstname"]}</td>
@@ -89,8 +114,57 @@ function loadTable(queries){
                 :
                 null
             }</td>
-        </tr>
-        `;
+        </tr>`;
     });
     tBody.innerHTML = content;
+}
+
+async function deleteAccount(){
+    const response = await fetch(backendURL + `/users/${sessionStorage.getItem("loggedIn")}`, {
+        method: "DELETE",
+    });
+    if (!response.ok){
+        return
+    }
+    window.location.href = "index.html";
+}   
+const savedFields = {
+    "salary": null,
+    "age": null,
+    "firstname": null,
+    "lastname": null
+}
+async function toggleEdits() {
+    const isEditing = document.querySelectorAll(".canedit input").length > 0;
+    document.getElementById("submitedits").hidden = isEditing;
+    document.getElementById("toggleedit").textContent = isEditing ? "Edit" : "Cancel";
+    document.querySelectorAll(".canedit").forEach(elem=>{
+        if (isEditing){
+            elem.textContent = savedFields[elem.dataset.type];
+        }else{
+            savedFields[elem.dataset.type] = elem.textContent;
+            elem.innerHTML = `<input type="text" value="${elem.textContent}">`;
+        }
+    })
+
+}
+
+async function submitEdits() {
+    const fields = {};
+    document.querySelectorAll(".canedit").forEach(elem=>{
+        const input = elem.querySelector("input");
+        fields[elem.dataset.type] = input.value;
+    })
+    const response = await fetch(backendURL + `/users/${sessionStorage.getItem("loggedIn")}`, {
+        "method": "PATCH",
+        "headers": {"Content-Type": "application/json"},
+        "body": JSON.stringify(fields)
+    })
+    if (!response.ok){
+        alert("Edit Failed");
+        return;
+    }
+    alert("Edit Succeeded!");
+    toggleEdits();
+    return
 }
