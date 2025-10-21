@@ -64,7 +64,6 @@ form.addEventListener("submit", async (e) => {
 });
 
 function loadTable(queries){
-    console.log(queries);
     const tBody = document.getElementById("user-entries");
     let content = "";
     
