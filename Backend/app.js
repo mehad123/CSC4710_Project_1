@@ -28,12 +28,17 @@ function handleError(func){
 }
 
 const addUser = handleError(async (request, response) => {  
-    await users.createUser(request.body);
+    await users.createUser(request.body); 
     response.send("ok");
 });
 const removeUser = handleError(async (request, response) => {  
     const {username} = request.params;
     await users.deleteUser(username);
+    response.send("ok");
+});
+const updateUser = handleError(async (request, response) => {  
+    const {username} = request.params;
+    await users.updateUser(username, request.body);
     response.send("ok");
 });
 const logInUser = handleError(async (request, response) => {  
@@ -113,6 +118,7 @@ app.get('/users', getUsers);
 app.post("/users/login", multerFormParser.none(), logInUser)
 app.get('/users/:username', getUser);
 app.delete('/users/:username',removeUser);
+app.patch("/users/:username", updateUser)
 
 app.listen(process.env.APP_PORT, 
     () => {
